@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InstaConvert</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <!-- Ambient glow background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+            <rect x="2" y="2" width="20" height="20" rx="6" stroke="url(#grad1)" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" stroke="url(#grad1)" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.5" fill="url(#grad1)"/>
+            <defs>
+              <linearGradient id="grad1" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f09433"/>
+                <stop offset="0.25" stop-color="#e6683c"/>
+                <stop offset="0.5" stop-color="#dc2743"/>
+                <stop offset="0.75" stop-color="#cc2366"/>
+                <stop offset="1" stop-color="#bc1888"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">InstaConvert</span>
+      </div>
+      <div class="badge" id="tab-status-badge">Extension</div>
+    </header>
+
+    <!-- Detected Tab Alert (if on Instagram post) -->
+    <div class="detected-banner hidden" id="detected-banner">
+      <div class="detected-info">
+        <span class="detected-icon">🎯</span>
+        <span class="detected-text">Active post detected!</span>
+      </div>
+      <button class="detected-btn" id="use-detected-btn">Use Active</button>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step active" id="step-1">
+          <div class="step-dot"><span>1</span></div>
+          <div class="step-label">Link</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-2">
+          <div class="step-dot"><span>2</span></div>
+          <div class="step-label">Process</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-3">
+          <div class="step-dot"><span>3</span></div>
+          <div class="step-label">PDF</div>
+        </div>
+      </div>
+
+      <!-- Input View -->
+      <div class="section-view" id="input-section">
+        <label class="input-label" for="post-url">Instagram Post URL</label>
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <input
+            type="url"
+            id="post-url"
+            class="url-input"
+            placeholder="https://www.instagram.com/p/..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="clear-btn" id="clear-btn" title="Clear">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="hint">Single posts, carousels &amp; reels</div>
+
+        <button class="convert-btn" id="convert-btn">
+          <span class="btn-text">Convert to PDF</span>
+          <div class="btn-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12" y1="18" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <polyline points="9 15 12 18 15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="btn-shimmer"></div>
+        </button>
+      </div>
+
+      <!-- Loading View -->
+      <div class="section-view hidden" id="loading-section">
+        <div class="spinner-box">
+          <svg class="spinner" viewBox="0 0 50 50">
+            <circle class="spinner-track" cx="25" cy="25" r="20" fill="none" stroke-width="4"/>
+            <circle class="spinner-head" cx="25" cy="25" r="20" fill="none" stroke-width="4"/>
+          </svg>
+        </div>
+        <p class="loading-title" id="loading-title">Converting your post…</p>
+        <div class="loading-steps-list">
+          <div class="load-step" id="ls-1">
+            <span class="ls-icon">⬇</span> Fetching post images
+          </div>
+          <div class="load-step" id="ls-2">
+            <span class="ls-icon">🖼</span> Processing &amp; rendering
+          </div>
+          <div class="load-step" id="ls-3">
+            <span class="ls-icon">📄</span> Generating PDF
+          </div>
+        </div>
+      </div>
+
+      <!-- Success View -->
+      <div class="section-view hidden" id="success-section">
+        <div class="success-icon">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="url(#sg)" stroke-width="2"/>
+            <polyline points="9 12 11 14 15 10" stroke="url(#sg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="sg" x1="2" y1="2" x2="22" y2="22">
+                <stop stop-color="#a78bfa"/>
+                <stop offset="1" stop-color="#ec4899"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h2 class="success-title">PDF Ready!</h2>
+        <p class="success-subtitle" id="success-desc">Converted successfully.</p>
+        <button class="download-btn" id="download-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Save to Downloads
+        </button>
+        <button class="reset-btn" id="reset-btn">Convert Another</button>
+      </div>
+
+      <!-- Error View -->
+      <div class="section-view hidden" id="error-section">
+        <div class="error-icon">⚠️</div>
+        <h2 class="error-title">Conversion Failed</h2>
+        <p class="error-message" id="error-message">Something went wrong.</p>
+        <button class="reset-btn" id="retry-btn">Try Again</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>100% Client-Side · Private &amp; Secure</span>
+    </footer>
+  </main>
+
+  <script src="../lib/jspdf.umd.min.js"></script>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

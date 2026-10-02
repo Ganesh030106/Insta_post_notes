@@ -1,0 +1,19 @@
+# Private Keys (NEVER commit your .pem or .key file)
+*.pem
+*.key
+
+# Generated PDFs & temp directories
+output/
+downloads/
+utils/downloads/
+utils/output/
+*.pdf
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+.gemini/
